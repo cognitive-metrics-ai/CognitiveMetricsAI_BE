@@ -20,7 +20,7 @@ class SQLAlchemyRepository(BaseRepository[ModelType], Generic[ModelType]):
 
     async def get_by_id(self, id: Any) -> Optional[ModelType]:
         result = await self.session.execute(select(self.model).where(self.model.id == id))
-        return result.scalars().first()
+        return result.unique().scalars().first()
 
     async def get_all(self, skip: int = 0, limit: int = 100, **filters) -> List[ModelType]:
         query = select(self.model)
@@ -29,7 +29,7 @@ class SQLAlchemyRepository(BaseRepository[ModelType], Generic[ModelType]):
                 query = query.where(getattr(self.model, key) == value)
         query = query.offset(skip).limit(limit)
         result = await self.session.execute(query)
-        return list(result.scalars().all())
+        return list(result.unique().scalars().all())
 
     async def create(self, obj_in: Any) -> ModelType:
         if isinstance(obj_in, dict):
