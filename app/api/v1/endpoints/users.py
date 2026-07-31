@@ -88,6 +88,7 @@ async def sync_user(
             "last_name": user_in.last_name or existing_user.last_name,
             "job_id": user_in.job_id or existing_user.job_id,
             "department_id": user_in.department_id or existing_user.department_id,
+            "photo_url": user_in.photo_url if user_in.photo_url is not None else existing_user.photo_url,
             "custom_metadata": merged_metadata
         }
         updated = await repo.update(existing_user.id, update_data)
